@@ -20,6 +20,21 @@ let renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+let texturePrefix = "scene_";
+let environment = new THREE.CubeTextureLoader().setPath("./page_1/").load([
+	texturePrefix + "left.jpg",
+	texturePrefix + "right.jpg",
+	texturePrefix + "top.jpg",
+	texturePrefix + "bottom.jpg",
+	texturePrefix + "back.jpg",
+	texturePrefix + "front.jpg"
+], function(texture) {
+
+	renderer.initTexture(texture);
+	scene.background = texture;
+
+});
+
 
 let raycaster = new THREE.Raycaster();
 
