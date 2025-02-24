@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 console.log(THREE);
 
@@ -19,18 +20,56 @@ document.body.appendChild(renderer.domElement);
 
 let controls = new OrbitControls(camera, renderer.domElement);
 controls.mouseButtons = {
-	//LEFT: THREE.MOUSE.PAN,
+	LEFT: THREE.MOUSE.PAN,
 	MIDDLE: THREE.MOUSE.PAN,
 	RIGHT: THREE.MOUSE.PAN
 };
 
 controls.touches = {
-	//ONE: THREE.TOUCH.PAN,
+	ONE: THREE.TOUCH.PAN,
 	TWO: THREE.TOUCH.DOLLY_PAN
 };
 
+
+let gltfLoader = new GLTFLoader();
+
+gltfLoader.load('./page_2/page_2__scene.glb', function(model) {
+
+	let children = model.scene.children;
+	for (let i = 0; i < children.length; i++) {
+		let currentChild = children[i];
+
+		switch (currentChild.name) {
+
+			case ("bounds"): {
+
+				let boundsMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+				currentChild.material = boundsMaterial;
+
+
+			} break;
+
+
+		}
+
+		console.log(currentChild);
+
+	}
+
+	console.log(model);
+	scene.add(model.scene);
+
+});
+
+let light = new THREE.DirectionalLight(0xFFFFFF, 3);
+light.position.set(1, 1, 1).normalize();
+scene.add(light);
+
+let ambientLight = new THREE.AmbientLight(0xFFFFFF, 3);
+scene.add(ambientLight);
+
 let geometry = new THREE.BoxGeometry(1, 1, 1);
-let material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+let material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
 let cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
