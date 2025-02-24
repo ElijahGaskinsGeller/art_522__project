@@ -1,21 +1,16 @@
-
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
-import path, { resolve } from 'path'
-import fs from 'fs'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
-
-	//base: "./"
 	build: {
-
 		rollupOptions: {
-
 			input: {
-				page_1: resolve(__dirname, "index.html"),
-				page_2: resolve(__dirname, "page_2.html")
-			}
-
-		}
-	}
-
+				main: resolve(__dirname, 'index.html'),
+				page_2: resolve(__dirname, 'page_2.html'),
+			},
+		},
+	},
 })
