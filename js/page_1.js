@@ -98,7 +98,9 @@ function OnPointerDown(e) {
 
 
 function OnMouseDown(e) {
-	desktopControls.lock();
+	if (e.target !== document.getElementById("p1-next")) {
+		desktopControls.lock();
+	}
 };
 
 function OnMouseUp(e) {
@@ -108,7 +110,7 @@ function OnMouseUp(e) {
 }
 
 function OnTouchStart(e) {
-	if (mobileControls === null) {
+	if (e.target !== document.getElementById("p1-next") && mobileControls === null) {
 		desktopControls.lock();
 	}
 }
