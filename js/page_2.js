@@ -71,7 +71,7 @@ scene.add(ambientLight);
 let geometry = new THREE.BoxGeometry(1, 1, 1);
 let material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
 let cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+//scene.add(cube);
 
 
 
