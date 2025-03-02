@@ -11,7 +11,7 @@ let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 
-camera.position.z = 5;
+camera.position.z = 20;
 
 
 let renderer = new THREE.WebGLRenderer();
@@ -32,6 +32,11 @@ controls.touches = {
 
 
 let gltfLoader = new GLTFLoader();
+let boundLeft = 0;
+let boundRight = 0;
+let boundTop = 0;
+let boundBottom = 0;
+let boundZoom = 0;
 
 gltfLoader.load('./page_2/page_2__scene.glb', function(model) {
 
@@ -41,12 +46,42 @@ gltfLoader.load('./page_2/page_2__scene.glb', function(model) {
 
 		switch (currentChild.name) {
 
+			case ("mrs_riita"): {
+
+
+
+			} break;
+
 			case ("bounds"): {
 
 				let boundsMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
 				currentChild.material = boundsMaterial;
 
+				camera.position.y = currentChild.position.y;
+				controls.target.y = currentChild.position.y;
 
+				boundZoom = currentChild.position.z + .2;
+
+			} break;
+
+			case ("bound_left"): {
+				boundLeft = currentChild.position.x;
+				console.log("b-left: " + boundLeft);
+			} break;
+
+			case ("bound_right"): {
+				boundRight = currentChild.position.x;
+				console.log("b-right: " + boundRight);
+			} break;
+
+			case ("bound_top"): {
+				boundTop = currentChild.position.y;
+				console.log("b-top: " + boundTop);
+			} break;
+
+			case ("bound_bottom"): {
+				boundBottom = currentChild.position.y;
+				console.log("b-bottom: " + boundBottom);
 			} break;
 
 
@@ -85,7 +120,6 @@ function OnWindowResize(e) {
 
 function OnPointerDown(e) {
 
-	console.log("getting input");
 
 }
 
@@ -107,12 +141,42 @@ function OnTouchEnd(e) {
 }
 
 
-
 function animate() {
-	cube.rotation.x += 0.01;
-	cube.rotation.y += 0.01;
+	//cube.rotation.x += 0.01;
+	//cube.rotation.y += 0.01;
 
+	if (camera.position.x < boundLeft) {
+		camera.position.x = boundLeft;
+		controls.target.x = boundLeft;
+		controls.update();
+	}
 
+	if (camera.position.x > boundRight) {
+		camera.position.x = boundRight;
+		controls.target.x = boundRight;
+		controls.update();
+	}
+
+	if (camera.position.y > boundTop) {
+		camera.position.y = boundTop;
+		controls.target.y = boundTop;
+		controls.update();
+	}
+
+	if (camera.position.y < boundBottom) {
+		camera.position.y = boundBottom;
+		controls.target.y = boundBottom;
+		controls.update();
+	}
+
+	//console.log(camera.position);
+	//console.log("boundzoom: " + boundZoom);
+
+	if (camera.position.z < boundZoom) {
+		camera.position.z = boundZoom;
+		//controls.target.z = boundZoom;
+		controls.update();
+	}
 
 	renderer.render(scene, camera);
 }
