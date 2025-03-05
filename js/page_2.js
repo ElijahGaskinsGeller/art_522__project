@@ -44,10 +44,18 @@ gltfLoader.load('./page_2/page_2__scene.glb', function(model) {
 	for (let i = 0; i < children.length; i++) {
 		let currentChild = children[i];
 
+		if (currentChild.material !== undefined) {
+			let basicMaterial = new THREE.MeshBasicMaterial({});
+			basicMaterial.map = currentChild.material.map;
+			currentChild.material = basicMaterial;
+		}
+
+
 		switch (currentChild.name) {
 
 			case ("mrs_riita"): {
 
+				currentChild.material.transparent = true;
 
 
 			} break;
@@ -98,7 +106,7 @@ gltfLoader.load('./page_2/page_2__scene.glb', function(model) {
 
 let light = new THREE.DirectionalLight(0xFFFFFF, 3);
 light.position.set(1, 1, 1).normalize();
-scene.add(light);
+//scene.add(light);
 
 let ambientLight = new THREE.AmbientLight(0xFFFFFF, 3);
 scene.add(ambientLight);
