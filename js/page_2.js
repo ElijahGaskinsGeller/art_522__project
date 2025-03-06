@@ -24,6 +24,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 let controls = new OrbitControls(camera, renderer.domElement);
+controls.enableRotate = false;
 controls.mouseButtons = {
 	LEFT: THREE.MOUSE.PAN,
 	MIDDLE: THREE.MOUSE.PAN,
@@ -50,7 +51,7 @@ gltfLoader.load('./page_2/page_2__scene.glb', function(model) {
 		let currentChild = children[i];
 
 		if (currentChild.material !== undefined) {
-			let basicMaterial = new THREE.MeshBasicMaterial({});
+			let basicMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
 			basicMaterial.map = currentChild.material.map;
 			currentChild.material = basicMaterial;
 		}
