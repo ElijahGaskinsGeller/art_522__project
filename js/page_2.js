@@ -4,6 +4,11 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 console.log(THREE);
 
+function randomRange(min, max) {
+	let result = Math.floor(Math.random() * (max - min + 1)) + min;
+	return result;
+}
+
 
 let scene = new THREE.Scene();
 
@@ -104,6 +109,45 @@ gltfLoader.load('./page_2/page_2__scene.glb', function(model) {
 
 });
 
+
+let leaves = [];
+let baseLeaf = null;
+let leafCount = 100;
+
+let leafRangeX = [-100, 20];
+let leafRangeY = [-5, 50];
+
+gltfLoader.load('./page_2/leaf.glb', function(model) {
+
+
+	baseLeaf = model.scene.children[0];
+	console.log(baseLeaf);
+	let scaleRange = .005;
+
+	for (let i = 0; i < leafCount; i++) {
+		let newLeaf = baseLeaf.clone(true);
+		newLeaf.position.x = randomRange(leafRangeX[0], leafRangeX[1]);
+		newLeaf.position.y = randomRange(leafRangeY[0], leafRangeY[1]);
+		newLeaf.position.z = 3;
+
+		newLeaf.scale.x = .1 + (scaleRange * (i % 10));
+		newLeaf.scale.y = .1 + (scaleRange * (i % 10));
+		newLeaf.scale.z = .1 + (scaleRange * (i % 10));
+
+		newLeaf.rotation.y = randomRange(0, 2 * Math.PI);
+
+
+
+		leaves.push(newLeaf);
+
+		scene.add(newLeaf);
+
+	}
+
+
+});
+
+
 let light = new THREE.DirectionalLight(0xFFFFFF, 3);
 light.position.set(1, 1, 1).normalize();
 //scene.add(light);
@@ -149,9 +193,39 @@ function OnTouchEnd(e) {
 }
 
 
+let clock = new THREE.Clock(true);
 function animate() {
 	//cube.rotation.x += 0.01;
 	//cube.rotation.y += 0.01;
+
+	if (leaves.length > 0) {
+		let leafXSpeed = 1;
+		let leafYSpeed = .5;
+		let deltaTime = clock.getDelta();
+
+		let leafRotationSpeed = Math.PI / 4;
+
+		let leafXSpeedRange = .03;
+		let leafYSpeedRange = .01;
+
+		let leavesPadding = 10;
+
+		for (let i = 0; i < leafCount; i++) {
+
+			leaves[i].position.x += (leafXSpeed + (leafXSpeedRange * (i % 10))) * deltaTime;
+			leaves[i].position.y -= (leafYSpeed + (leafYSpeedRange * (i % 10))) * deltaTime;
+
+			leaves[i].rotation.y += leafRotationSpeed * deltaTime;
+
+			if (leaves[i].position.x > boundRight + leavesPadding || leaves[i].position.y < boundBottom - leavesPadding) {
+
+				leaves[i].position.x = randomRange(leafRangeX[0], leafRangeX[1]);
+				leaves[i].position.y = randomRange(leafRangeY[0], leafRangeY[1]);
+
+			}
+		}
+	}
+
 
 	if (camera.position.x < boundLeft) {
 		camera.position.x = boundLeft;
