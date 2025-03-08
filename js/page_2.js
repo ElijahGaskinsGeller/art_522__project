@@ -52,6 +52,7 @@ gltfLoader.load('./page_2/page_2__scene.glb', function(model) {
 
 		if (currentChild.material !== undefined) {
 			let basicMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
+			basicMaterial.transparent = true;
 			basicMaterial.map = currentChild.material.map;
 			currentChild.material = basicMaterial;
 		}
@@ -122,6 +123,7 @@ gltfLoader.load('./page_2/leaf.glb', function(model) {
 
 
 	baseLeaf = model.scene.children[0];
+	baseLeaf.material.transparent = true;
 	console.log(baseLeaf);
 	let scaleRange = .005;
 
@@ -204,10 +206,11 @@ function animate() {
 		let leafYSpeed = .5;
 		let deltaTime = clock.getDelta();
 
-		let leafRotationSpeed = Math.PI / 4;
+		let leafRotationSpeed = Math.PI / 6;
 
 		let leafXSpeedRange = .03;
 		let leafYSpeedRange = .01;
+		let leafRotationSpeedRange = .01;
 
 		let leavesPadding = 10;
 
@@ -216,7 +219,16 @@ function animate() {
 			leaves[i].position.x += (leafXSpeed + (leafXSpeedRange * (i % 10))) * deltaTime;
 			leaves[i].position.y -= (leafYSpeed + (leafYSpeedRange * (i % 10))) * deltaTime;
 
-			leaves[i].rotation.y += leafRotationSpeed * deltaTime;
+			leaves[i].rotation.y += (leafRotationSpeedRange + (leafRotationSpeedRange * (i % 10))) * deltaTime;
+
+			if (leaves[i].position.x < boundLeft - leavesPadding || leaves[i].position.y > boundTop + leavesPadding) {
+				scene.remove(leaves[i]);
+				//leaves[i].material.opacity = 0;
+			} else {
+				scene.add(leaves[i]);
+				//leaves[i].material.opacity = 1;
+			}
+
 
 			if (leaves[i].position.x > boundRight + leavesPadding || leaves[i].position.y < boundBottom - leavesPadding) {
 
