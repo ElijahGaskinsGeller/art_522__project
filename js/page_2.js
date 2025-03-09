@@ -38,11 +38,26 @@ controls.touches = {
 
 
 let gltfLoader = new GLTFLoader();
+let textureLoader = new THREE.TextureLoader();
+
+
 let boundLeft = 0;
 let boundRight = 0;
 let boundTop = 0;
 let boundBottom = 0;
 let boundZoom = 0;
+
+let smoke = null;
+let smokeTextures = [];
+
+smokeTextures.push(textureLoader.load("./page_2/smoke_0000.png", function(t) {
+	if (smoke !== null) {
+		smoke.material.map = smokeTextures[0];
+	}
+}));
+smokeTextures.push(textureLoader.load("./page_2/smoke_0001.png"));
+smokeTextures.push(textureLoader.load("./page_2/smoke_0002.png"));
+smokeTextures.push(textureLoader.load("./page_2/smoke_0003.png"));
 
 gltfLoader.load('./page_2/page_2__scene.glb', function(model) {
 
@@ -51,6 +66,7 @@ gltfLoader.load('./page_2/page_2__scene.glb', function(model) {
 		let currentChild = children[i];
 
 		if (currentChild.material !== undefined) {
+
 			let basicMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
 			basicMaterial.transparent = true;
 			basicMaterial.map = currentChild.material.map;
@@ -62,20 +78,37 @@ gltfLoader.load('./page_2/page_2__scene.glb', function(model) {
 
 			case ("mrs_riita"): {
 
-				currentChild.material.transparent = true;
+				//currentChild.material.transparent = true;
 
+
+			} break;
+
+			case ("smoke"): {
+
+				smoke = currentChild;
+
+				if (smokeTextures[0] !== undefined) {
+					smoke.material.map = smokeTextures[0];
+				}
+				smoke.scale.z *= -1;
 
 			} break;
 
 			case ("bounds"): {
 
-				let boundsMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
-				currentChild.material = boundsMaterial;
+				//let boundsMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+				//currentChild.material = boundsMaterial;
 
 				camera.position.y = currentChild.position.y;
 				controls.target.y = currentChild.position.y;
 
 				boundZoom = currentChild.position.z + .2;
+
+			} break;
+
+			case ("riita_bars"): {
+
+				currentChild.material.transparent = false;
 
 			} break;
 
@@ -158,9 +191,9 @@ light.position.set(1, 1, 1).normalize();
 let ambientLight = new THREE.AmbientLight(0xFFFFFF, 3);
 scene.add(ambientLight);
 
-let geometry = new THREE.BoxGeometry(1, 1, 1);
-let material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
-let cube = new THREE.Mesh(geometry, material);
+//let geometry = new THREE.BoxGeometry(1, 1, 1);
+//let material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
+//let cube = new THREE.Mesh(geometry, material);
 //scene.add(cube);
 
 
@@ -197,14 +230,41 @@ function OnTouchEnd(e) {
 
 
 let clock = new THREE.Clock(true);
+let frameLength = .75;
+let frameTimer = 0;
+let currentFrame = 0;
 function animate() {
-	//cube.rotation.x += 0.01;
-	//cube.rotation.y += 0.01;
+
+	let deltaTime = clock.getDelta();
+
+
+	if (smoke !== null && smokeTextures.length !== 0) {
+		frameTimer += deltaTime;
+		if (frameTimer > frameLength) {
+			currentFrame++;
+			if (currentFrame >= smokeTextures.length) {
+				currentFrame = 0;
+			}
+
+			while (frameTimer > frameLength) {
+				frameTimer -= frameLength;
+			}
+
+			if (smoke.material.map !== smokeTextures[currentFrame]) {
+				smoke.material.map = smokeTextures[currentFrame];
+			}
+
+
+		}
+
+	}
+
+
+
 
 	if (leaves.length > 0) {
 		let leafXSpeed = 1;
 		let leafYSpeed = .5;
-		let deltaTime = clock.getDelta();
 
 		let leafRotationSpeed = Math.PI / 6;
 
@@ -238,6 +298,8 @@ function animate() {
 			}
 		}
 	}
+
+
 
 
 	if (camera.position.x < boundLeft) {
