@@ -16,24 +16,40 @@ canvas {
         bottom: 50px;
         right: 50px;
         text-decoration: none;
+        z-index: 1;
 
 }
 
 .back {
 
-        position: absolute;
+        position: fixed;
         font-size: 5rem;
         bottom: 50px;
         left: 50px;
         text-decoration: none;
+        z-index: 1;
 
 }
 
-#p1-next {
-        color: white;
-}
-
+#p1-next,
 #p2-next,
-#p2-back {
+#p2-back{
         color: white;
+}
+
+#p3-back{
+        color: black;
+}
+
+#page-3{
+
+        height: 200vh;
+        overflow: auto !important;
+
+}
+
+#page-3 canvas{
+
+        position: fixed;
+
 }
