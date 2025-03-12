@@ -25,12 +25,17 @@ function WindowScrollNormalPosition() {
 	return window.scrollY / (GetPageHeight() - window.innerHeight);
 }
 
-function OnScreenLerpPosition(quadBounds, quadPos, camera) {
-	let cameraTopLeft = new THREE.Vector3(camera.position.x - window.innerWidth / 2,
-		camera.position.y + window.innerHeight / 2, camera.position.z);
+function OnScreenLerpPosition(quadBounds, quadScale, quadPos, camera) {
 
-	console.log(cameraTopLeft);
+	let cameraTop = -(camera.position.y + window.innerHeight / 2);
 
+	//NOTE: z is applied for vertical bounds for whatever reason (dont ask me)
+	let appliedMax = (quadBounds.max.z * quadScale.y) + quadPos.y;
+	let appliedMin = ((quadBounds.min.z * quadScale.y) + quadPos.y) - window.innerHeight;
+
+	let normalPos = inverseLerp(appliedMin, appliedMax, cameraTop);
+
+	return normalPos;
 }
 
 console.log(THREE);
@@ -44,6 +49,7 @@ let camera = new THREE.OrthographicCamera(window.innerWidth / -2,
 	window.innerWidth / 2,
 	window.innerHeight / 2,
 	window.innerHeight / -2, 0.1, 1000);
+//camera.aspect = window.innerWidth / window.innerHeight;
 
 camera.position.z = 5;
 
@@ -54,6 +60,7 @@ let cameraEnd = 0;
 let renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
 
 
 //let controls = new OrbitControls(camera, renderer.domElement);
@@ -107,6 +114,7 @@ let cube = new THREE.Mesh(geometry, material);
 //scene.add(cube);
 
 
+//TODO: resize is broken
 
 function OnWindowResize(e) {
 
@@ -145,15 +153,20 @@ function animate() {
 	camera.position.y = currentCameraPosition;
 
 	if (panel_0 !== null) {
-		console.log("camera.position: ");
-		console.log(camera.position);
-		OnScreenLerpPosition(panel_0.geometry.boundingBox, panel_0.position, camera);
+		let normPos = OnScreenLerpPosition(panel_0.geometry.boundingBox, panel_0.scale, panel_0.position, camera);
+
+		normPos = clamp(normPos, 0, 1);
+
+		panel_0.material.color = new THREE.Color(normPos, 1 - normPos, normPos);
+
+
 	}
 
 	//let currentRotation = lerp(scrollStart, scrollEnd, currentPos);
 
 
 
+	//console.log("ratio: " + camera.aspect);
 	renderer.render(scene, camera);
 }
 
