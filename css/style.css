@@ -10,25 +10,21 @@ canvas {
 }
 
 .next {
-
         position: absolute;
         font-size: 5rem;
         bottom: 50px;
         right: 50px;
         text-decoration: none;
         z-index: 1;
-
 }
 
 .back {
-
         position: fixed;
         font-size: 5rem;
         bottom: 50px;
         left: 50px;
         text-decoration: none;
         z-index: 1;
-
 }
 
 #p1-next,
@@ -43,7 +39,7 @@ canvas {
 
 #page-3{
 
-        height: 200vh;
+        height: 400vh;
         overflow: auto !important;
 
 }

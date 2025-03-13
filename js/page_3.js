@@ -77,13 +77,14 @@ gltfLoader.load("./page_3/page_3_layout.glb", function(model) {
 		let currentChild = children[i];
 		console.log(currentChild);
 
+		if (currentChild.material !== undefined) {
+
+			let newMaterial = new THREE.MeshBasicMaterial({ map: currentChild.material.map });
+			currentChild.material = newMaterial;
+
+		}
+
 		switch (currentChild.name) {
-
-			case ("plane"): {
-
-				panel_0 = currentChild;
-
-			} break;
 
 			case ("start"): {
 				cameraStart = currentChild.position.y;
