@@ -42,7 +42,7 @@ let raycaster = new THREE.Raycaster();
 let geometry = new THREE.BoxGeometry(1, 1, 1);
 let material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 let cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+//scene.add(cube);
 
 
 let mobileMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
@@ -85,14 +85,14 @@ function OnPointerDown(e) {
 
 
 	raycaster.setFromCamera(pointer, camera);
-	let intersects = raycaster.intersectObject(cube);
+	//let intersects = raycaster.intersectObject(cube);
 
-	if (intersects.length > 0) {
+	//if (intersects.length > 0) {
 
-		console.log(intersects[0]);
-		intersects[0].object.material.color.set('#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0'));
+	//console.log(intersects[0]);
+	//intersects[0].object.material.color.set('#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0'));
 
-	}
+	//}
 
 }
 
@@ -124,8 +124,8 @@ function OnTouchEnd(e) {
 
 
 function animate() {
-	cube.rotation.x += 0.01;
-	cube.rotation.y += 0.01;
+	//cube.rotation.x += 0.01;
+	//cube.rotation.y += 0.01;
 
 	if (mobileControls !== null) {
 
