@@ -12,6 +12,7 @@ export default defineConfig({
 			input: {
 				main: resolve(__dirname, 'index.html'),
 				page_2: resolve(__dirname, 'page_2.html'),
+				page_3: resolve(__dirname, 'page_3.html'),
 			},
 		},
 	},
