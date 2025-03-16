@@ -49,7 +49,6 @@ let camera = new THREE.OrthographicCamera(window.innerWidth / -2,
 	window.innerWidth / 2,
 	window.innerHeight / 2,
 	window.innerHeight / -2, 0.1, 1000);
-//camera.aspect = window.innerWidth / window.innerHeight;
 
 camera.position.z = 5;
 
@@ -62,11 +61,17 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 
-
 //let controls = new OrbitControls(camera, renderer.domElement);
 
 let gltfLoader = new GLTFLoader();
 let panel_0 = null;
+
+let bubble_0 = null;
+let bubble_0_textures = [];
+let bubble_0_frameLength = 1;
+let bubble_0_frameTimer = 0;
+let bubble_0_currentFrame = 0;
+
 gltfLoader.load("./page_3/page_3_layout.glb", function(model) {
 
 
@@ -90,6 +95,18 @@ gltfLoader.load("./page_3/page_3_layout.glb", function(model) {
 				cameraStart = currentChild.position.y;
 			} break;
 
+			case ("bubble_0"): {
+
+				bubble_0 = currentChild;
+				bubble_0.scale.z *= -1;
+				if (bubble_0_textures[0] !== undefined) {
+
+					bubble_0.material.map = bubble_0_textures[0];
+
+				}
+
+
+			} break;
 
 			case ("end"): {
 				cameraEnd = currentChild.position.y;
@@ -108,14 +125,27 @@ gltfLoader.load("./page_3/page_3_layout.glb", function(model) {
 
 });
 
+let textureLoader = new THREE.TextureLoader();
 
-let geometry = new THREE.BoxGeometry(1, 1, 1);
-let material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-let cube = new THREE.Mesh(geometry, material);
-//scene.add(cube);
+bubble_0_textures.push(textureLoader.load("page_3/bubble_0/bubble_0_0000.png", function(t) {
+	console.log(t);
+}));
+bubble_0_textures.push(textureLoader.load("page_3/bubble_0/bubble_0_0001.png", function(t) {
 
+	console.log(t);
 
-//TODO: resize is broken
+}));
+bubble_0_textures.push(textureLoader.load("page_3/bubble_0/bubble_0_0002.png", function(t) {
+
+	console.log(t);
+
+}));
+bubble_0_textures.push(textureLoader.load("page_3/bubble_0/bubble_0_0003.png", function(t) {
+
+	console.log(t);
+
+}));
+
 
 function OnWindowResize(e) {
 	console.log("here");
@@ -146,18 +176,38 @@ function OnWindowResize(e) {
 //
 //}
 //
-function animate() {
-	//cube.rotation.x += 0.01;
-	//cube.rotation.y += 0.01;
 
-	//let scrollStart = Math.PI / 2;
-	//let scrollEnd = -Math.PI / 2;
+let clock = new THREE.Clock(true);
+function animate() {
+
+	let deltaTime = clock.getDelta();
 
 	let currentScrollPos = WindowScrollNormalPosition();
 
 	let currentCameraPosition = lerp(cameraStart, cameraEnd, currentScrollPos);
 
 	camera.position.y = currentCameraPosition;
+
+
+
+	if (bubble_0 !== null && bubble_0_textures.length !== 0) {
+
+		bubble_0_frameTimer += deltaTime;
+		if (bubble_0_frameTimer > bubble_0_frameLength) {
+			bubble_0_currentFrame++;
+			if (bubble_0_currentFrame >= bubble_0_textures.length) {
+				bubble_0_currentFrame = 0;
+			}
+
+			while (bubble_0_frameTimer > bubble_0_frameLength) {
+				bubble_0_frameTimer -= bubble_0_frameLength;
+			}
+
+			bubble_0.material.map = bubble_0_textures[bubble_0_currentFrame];
+		}
+	}
+
+
 
 	if (panel_0 !== null) {
 		let normPos = OnScreenLerpPosition(panel_0.geometry.boundingBox, panel_0.scale, panel_0.position, camera);
