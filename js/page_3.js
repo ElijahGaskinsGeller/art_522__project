@@ -25,15 +25,16 @@ function WindowScrollNormalPosition() {
 	return window.scrollY / (GetPageHeight() - window.innerHeight);
 }
 
-function OnScreenLerpPosition(quadBounds, quadScale, quadPos, camera) {
+function OnScreenLerpPosition(quadBounds, quadScale, quadPos, camera, scaleOffset = 0, verticalOffset = 0) {
 
-	let cameraTop = -(camera.position.y + window.innerHeight / 2);
+	let cameraTop = (camera.position.y + window.innerHeight / 2);
 
 	//NOTE: z is applied for vertical bounds for whatever reason (dont ask me)
-	let appliedMax = (quadBounds.max.z * quadScale.y) + quadPos.y;
-	let appliedMin = ((quadBounds.min.z * quadScale.y) + quadPos.y) - window.innerHeight;
+	let appliedMax = (quadBounds.max.z * (quadScale.y + scaleOffset)) + quadPos.y + verticalOffset;
+	let appliedMin = ((quadBounds.min.z * (quadScale.y + scaleOffset)) + quadPos.y + verticalOffset) - window.innerHeight;
 
-	let normalPos = inverseLerp(appliedMin, appliedMax, cameraTop);
+	let normalPos = inverseLerp(appliedMax, appliedMin, cameraTop);
+
 
 	return normalPos;
 }
@@ -64,13 +65,17 @@ document.body.appendChild(renderer.domElement);
 //let controls = new OrbitControls(camera, renderer.domElement);
 
 let gltfLoader = new GLTFLoader();
-let panel_0 = null;
 
 let bubble_0 = null;
 let bubble_0_textures = [];
 let bubble_0_frameLength = 1;
 let bubble_0_frameTimer = 0;
 let bubble_0_currentFrame = 0;
+
+
+let panel_0 = null;
+let panel_0_textures = [];
+
 
 gltfLoader.load("./page_3/page_3_layout.glb", function(model) {
 
@@ -108,6 +113,17 @@ gltfLoader.load("./page_3/page_3_layout.glb", function(model) {
 
 			} break;
 
+			case ("panel_0"): {
+
+				panel_0 = currentChild;
+				panel_0.scale.z *= -1;
+				if (panel_0_textures[0] !== undefined) {
+
+					panel_0.material.map = panel_0_textures[0];
+
+				}
+			} break;
+
 			case ("end"): {
 				cameraEnd = currentChild.position.y;
 			} break;
@@ -127,24 +143,15 @@ gltfLoader.load("./page_3/page_3_layout.glb", function(model) {
 
 let textureLoader = new THREE.TextureLoader();
 
-bubble_0_textures.push(textureLoader.load("page_3/bubble_0/bubble_0_0000.png", function(t) {
-	console.log(t);
-}));
-bubble_0_textures.push(textureLoader.load("page_3/bubble_0/bubble_0_0001.png", function(t) {
+bubble_0_textures.push(textureLoader.load("page_3/bubble_0/bubble_0_0000.png", function(t) { }));
+bubble_0_textures.push(textureLoader.load("page_3/bubble_0/bubble_0_0001.png", function(t) { }));
+bubble_0_textures.push(textureLoader.load("page_3/bubble_0/bubble_0_0002.png", function(t) { }));
+bubble_0_textures.push(textureLoader.load("page_3/bubble_0/bubble_0_0003.png", function(t) { }));
 
-	console.log(t);
 
-}));
-bubble_0_textures.push(textureLoader.load("page_3/bubble_0/bubble_0_0002.png", function(t) {
-
-	console.log(t);
-
-}));
-bubble_0_textures.push(textureLoader.load("page_3/bubble_0/bubble_0_0003.png", function(t) {
-
-	console.log(t);
-
-}));
+for (let i = 0; i <= 16; i++) {
+	panel_0_textures.push(textureLoader.load("page_3/panel_0/panel_0_00" + ((i > 9) ? i : "0" + i) + ".png", function(t) { t.colorSpace = THREE.SRGBColorSpace; renderer.initTexture(t); console.log(t); }));
+}
 
 
 function OnWindowResize(e) {
@@ -208,22 +215,17 @@ function animate() {
 	}
 
 
+	if (panel_0 !== null && panel_0_textures.length !== 0) {
 
-	if (panel_0 !== null) {
-		let normPos = OnScreenLerpPosition(panel_0.geometry.boundingBox, panel_0.scale, panel_0.position, camera);
+		let panel_0_pos = OnScreenLerpPosition(panel_0.geometry.boundingBox, panel_0.scale, panel_0.position, camera, -600, 800);
+		let currentFrame = clamp(Math.round(panel_0_pos * panel_0_textures.length), 0, panel_0_textures.length - 1);
 
-		normPos = clamp(normPos, 0, 1);
 
-		panel_0.material.color = new THREE.Color(normPos, 1 - normPos, normPos);
-
+		panel_0.material.map = panel_0_textures[currentFrame];
 
 	}
 
-	//let currentRotation = lerp(scrollStart, scrollEnd, currentPos);
 
-
-
-	//console.log("ratio: " + camera.aspect);
 	renderer.render(scene, camera);
 }
 
