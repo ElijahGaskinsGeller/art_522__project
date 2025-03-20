@@ -152,14 +152,15 @@ let raycaster = new THREE.Raycaster();
 
 
 let geometry = new THREE.BoxGeometry(1.3, 1.3, 1.3);
-let material = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: .0 });
+let material = new THREE.MeshBasicMaterial({ transparent: true, opacity: .0 });
+material.transparent = true;
+material.opacity = 0;
 let cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 cube.position.x = -3;
 cube.position.z = 4.7;
 
 
-let mobileMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
 let desktopControls = new PointerLockControls(camera, renderer.domElement);
 let mobileControls = null;
 console.log(desktopControls);
@@ -170,7 +171,6 @@ function OnDeviceTilt(e) {
 	console.log(e);
 
 	if (!confirmDevice && e.alpha !== null && e.beta !== null && e.gamma !== null) {
-		cube.material = mobileMaterial;
 		confirmDevice = true;
 
 		desktopControls.disconnect();
