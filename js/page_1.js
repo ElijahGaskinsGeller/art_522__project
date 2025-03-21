@@ -52,6 +52,18 @@ function SetBackground() {
 
 	]);
 
+	cubeTextures[2] = new THREE.CubeTexture([
+
+		leftTexture_2,
+		rightTexture,
+		topTexture,
+		bottomTexture,
+		backTexture,
+		frontTexture
+
+	]);
+
+
 	for (let i = 0; i < cubeTextures.length; i++) {
 		cubeTextures[i].needsUpdate = true;
 		cubeTextures[i].colorSpace = THREE.SRGBColorSpace;
@@ -66,7 +78,7 @@ function SetBackground() {
 
 let imageLoader = new THREE.ImageLoader();
 
-let loadTarget = 7;
+let loadTarget = 8;
 let loaded = 0;
 
 let frontTexture = imageLoader.load(texturePrefix + "front.jpg", function(image) {
@@ -92,6 +104,13 @@ let leftTexture_0 = imageLoader.load(texturePrefix + "left_0.jpg", function(imag
 });
 
 let leftTexture_1 = imageLoader.load(texturePrefix + "left_1.jpg", function(image) {
+	loaded++;
+	if (loaded == loadTarget) {
+		SetBackground();
+	}
+});
+
+let leftTexture_2 = imageLoader.load(texturePrefix + "left_2.jpg", function(image) {
 	loaded++;
 	if (loaded == loadTarget) {
 		SetBackground();

@@ -10,7 +10,7 @@ canvas {
 }
 
 .next {
-        position: absolute;
+        position: fixed;
         font-size: 5rem;
         bottom: 50px;
         right: 50px;
@@ -29,22 +29,33 @@ canvas {
 
 #p1-next,
 #p2-next,
-#p2-back{
+#p2-back {
         color: white;
 }
 
-#p3-back{
+#p3-back,
+#p3-next,
+#p4-back,
+#p4-next {
         color: black;
 }
 
-#page-3{
+#page-3 {
 
         height: 400vh;
         overflow: auto !important;
 
 }
 
-#page-3 canvas{
+#page-4 {
+
+        height: 400vh;
+        overflow: auto !important;
+
+}
+
+#page-3 canvas,
+#page-4 canvas {
 
         position: fixed;
 
