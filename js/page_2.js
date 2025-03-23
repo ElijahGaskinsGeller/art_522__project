@@ -102,7 +102,7 @@ gltfLoader.load('./page_2/page_2__scene.glb', function(model) {
 				camera.position.y = currentChild.position.y;
 				controls.target.y = currentChild.position.y;
 
-				boundZoom = currentChild.position.z + .2;
+				boundZoom = currentChild.position.z - 4;
 
 			} break;
 
