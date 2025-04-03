@@ -233,6 +233,9 @@ let clock = new THREE.Clock(true);
 let frameLength = .75;
 let frameTimer = 0;
 let currentFrame = 0;
+
+let previousButtons = [];
+
 function animate() {
 
 	let deltaTime = clock.getDelta();
@@ -295,6 +298,78 @@ function animate() {
 				leaves[i].position.x = randomRange(leafRangeX[0], leafRangeX[1]);
 				leaves[i].position.y = randomRange(leafRangeY[0], leafRangeY[1]);
 
+			}
+		}
+	}
+
+	let gamepads = navigator.getGamepads();
+
+	for (let i = 0; i < gamepads.length; i++) {
+
+		let currentGamepad = gamepads[i];
+
+		if (currentGamepad !== null) {
+
+			let stickX = currentGamepad.axes[0];
+			let stickY = -currentGamepad.axes[1];
+			let rawInput = new THREE.Vector2(stickX, stickY);
+			let normalStick = new THREE.Vector2(stickX, stickY).normalize().multiplyScalar(rawInput.length());
+
+
+			let panSpeed = 20;
+			if (stickX * stickX > .05) {
+				camera.position.x += normalStick.x * panSpeed * deltaTime;
+				controls.target.x = camera.position.x;
+				controls.update();
+				//camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), normalStick.x * -.01);
+			}
+
+			if (stickY * stickY > .05) {
+				camera.position.y += normalStick.y * panSpeed * deltaTime;
+				controls.target.y = camera.position.y;
+				controls.update();
+				//camera.rotateOnAxis(new THREE.Vector3(1, 0, 0), normalStick.y * .01);
+			}
+
+
+			for (let j = 0; j < currentGamepad.buttons.length; j++) {
+
+				let currentButton = currentGamepad.buttons[j];
+
+				if (currentButton.pressed) {
+					console.log(j);
+				}
+
+
+				if (previousButtons[j] !== undefined && previousButtons[j] && previousButtons[j] !== currentButton.pressed) {
+
+					switch (j) {
+						default: { } break;
+					}
+
+				}
+			}
+
+			let zoomSpeed = 20;
+			if (currentGamepad.buttons[6].pressed) {
+				camera.position.z += currentGamepad.buttons[6].value * zoomSpeed * deltaTime;
+			}
+
+			if (currentGamepad.buttons[7].pressed) {
+				camera.position.z -= currentGamepad.buttons[7].value * zoomSpeed * deltaTime;
+			}
+
+			if (currentGamepad.buttons[4].pressed) {
+				window.location.href = "index.html";
+			}
+
+			if (currentGamepad.buttons[5].pressed) {
+				window.location.href = "page_3.html";
+			}
+
+
+			for (let j = 0; j < currentGamepad.buttons.length; j++) {
+				previousButtons[j] = currentGamepad.buttons[j].pressed;
 			}
 		}
 	}

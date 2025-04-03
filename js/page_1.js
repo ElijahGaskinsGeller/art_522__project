@@ -287,13 +287,14 @@ function animate() {
 
 				let stickX = currentGamepad.axes[0];
 				let stickY = -currentGamepad.axes[1];
-				let normalStick = new THREE.Vector2(stickX, stickY).normalize();
+				let rawInput = new THREE.Vector2(stickX, stickY);
+				let normalStick = new THREE.Vector2(stickX, stickY).normalize().multiplyScalar(rawInput.length());
 
-				if (stickX * stickX > .2) {
+				if (stickX * stickX > .05) {
 					camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), normalStick.x * -.01);
 				}
 
-				if (stickY * stickY > .2) {
+				if (stickY * stickY > .05) {
 					camera.rotateOnAxis(new THREE.Vector3(1, 0, 0), normalStick.y * .01);
 				}
 

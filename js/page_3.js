@@ -184,6 +184,7 @@ function OnWindowResize(e) {
 //}
 //
 
+let previousButtons = [];
 let clock = new THREE.Clock(true);
 function animate() {
 
@@ -224,6 +225,58 @@ function animate() {
 		panel_0.material.map = panel_0_textures[currentFrame];
 
 	}
+
+	let gamepads = navigator.getGamepads();
+
+	for (let i = 0; i < gamepads.length; i++) {
+
+		let currentGamepad = gamepads[i];
+
+		if (currentGamepad !== null) {
+
+			let stickX = currentGamepad.axes[0];
+			let stickY = -currentGamepad.axes[1];
+			let rawInput = new THREE.Vector2(stickX, stickY);
+			let normalStick = new THREE.Vector2(stickX, stickY).normalize().multiplyScalar(rawInput.length());
+
+			if (stickX * stickX > .05) {
+				//camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), normalStick.x * -.01);
+			}
+
+			if (stickY * stickY > .05) {
+				console.log(stickY);
+				window.scrollBy(0, -stickY * 5);
+				//camera.rotateOnAxis(new THREE.Vector3(1, 0, 0), normalStick.y * .01);
+			}
+
+
+			for (let j = 0; j < currentGamepad.buttons.length; j++) {
+
+				if (currentGamepad.buttons[j].pressed) {
+					console.log(j);
+				}
+
+
+				if (previousButtons[j] !== undefined && previousButtons[j] && previousButtons[j] !== currentGamepad.buttons[j].pressed) {
+
+					switch (j) { }
+
+				}
+			}
+
+
+			if (currentGamepad.buttons[4].pressed) {
+				window.location.href = "page_2.html";
+			}
+
+
+			for (let j = 0; j < currentGamepad.buttons.length; j++) {
+				previousButtons[j] = currentGamepad.buttons[j].pressed;
+			}
+		}
+
+	}
+
 
 
 	renderer.render(scene, camera);
