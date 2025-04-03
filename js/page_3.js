@@ -89,7 +89,7 @@ gltfLoader.load("./page_3/page_3_layout.glb", function(model) {
 
 		if (currentChild.material !== undefined) {
 
-			let newMaterial = new THREE.MeshBasicMaterial({ map: currentChild.material.map });
+			let newMaterial = new THREE.MeshBasicMaterial({ map: currentChild.material.map, transparent: true });
 			currentChild.material = newMaterial;
 
 		}
