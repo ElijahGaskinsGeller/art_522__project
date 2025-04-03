@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 import { DeviceOrientationControls } from './DeviceOrientationControls.js';
+import { normalize } from 'three/src/math/MathUtils.js';
 
 console.log(THREE);
 
@@ -267,13 +268,81 @@ function OnTouchEnd(e) {
 
 
 
+let previousButtons = [];
+
 function animate() {
-	//cube.rotation.x += 0.01;
-	//cube.rotation.y += 0.01;
 
 	if (mobileControls !== null) {
 
 		mobileControls.update();
+
+	} else {
+		let gamepads = navigator.getGamepads();
+
+		for (let i = 0; i < gamepads.length; i++) {
+
+			let currentGamepad = gamepads[i];
+
+			if (currentGamepad !== null) {
+
+				let stickX = currentGamepad.axes[0];
+				let stickY = -currentGamepad.axes[1];
+				let normalStick = new THREE.Vector2(stickX, stickY).normalize();
+
+				if (stickX * stickX > .2) {
+					camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), normalStick.x * -.01);
+				}
+
+				if (stickY * stickY > .2) {
+					camera.rotateOnAxis(new THREE.Vector3(1, 0, 0), normalStick.y * .01);
+				}
+
+
+				for (let j = 0; j < currentGamepad.buttons.length; j++) {
+
+					if (currentGamepad.buttons[j].pressed) {
+						console.log(j);
+					}
+
+
+					if (previousButtons[j] !== undefined && previousButtons[j] && previousButtons[j] !== currentGamepad.buttons[j].pressed) {
+
+
+						switch (j) {
+
+							case (14): {
+								if (cubeTextures.length > 0) {
+									currentChanel--;
+									if (currentChanel < 0) currentChanel = cubeTextures.length - 1;
+									scene.background = cubeTextures[currentChanel];
+								}
+							} break;
+
+							case (15): {
+								if (cubeTextures.length > 0) {
+									currentChanel++;
+									if (currentChanel >= cubeTextures.length) currentChanel = 0;
+									scene.background = cubeTextures[currentChanel];
+								}
+							} break;
+
+						}
+
+					}
+				}
+
+
+				if (currentGamepad.buttons[5].pressed) {
+					window.location.href = "page_2.html";
+				}
+
+
+				for (let j = 0; j < currentGamepad.buttons.length; j++) {
+					previousButtons[j] = currentGamepad.buttons[j].pressed;
+				}
+			}
+
+		}
 
 	}
 
